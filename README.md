@@ -3,7 +3,7 @@
 ### _C compiler tendra in docker_
  [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-jeffs-keyboard.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](https://forthebadge.com)
 
-[![docker-tendra](https://github.com/Bensuperpc/docker-tendra/actions/workflows/main.yml/badge.svg)](https://github.com/Bensuperpc/docker-tendra/actions/workflows/main.yml)
+[![docker-tendra](https://github.com/bensuperpc/docker-tendra/actions/workflows/main.yml/badge.svg)](https://github.com/bensuperpc/docker-tendra/actions/workflows/main.yml)
 
 # New Features !
 
