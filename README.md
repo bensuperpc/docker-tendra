@@ -7,7 +7,7 @@
 
 # New Features !
 
-  - Multi-plateform build (ARM64, ARMv7, PPC64le, AMD64, I386...)
+  - Work
 
 #### Install
 You need Linux distribution like Ubuntu or Manjaoro
