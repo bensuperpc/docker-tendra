@@ -1,17 +1,29 @@
-ARG DOCKER_IMAGE=alpine:latest
+ARG DOCKER_IMAGE=ubuntu:20.04
 FROM $DOCKER_IMAGE AS builder
 
-RUN apk add --no-cache gcc make musl-dev git \
-	&& git clone --recurse-submodules <<GIT_URL>>
-WORKDIR /<<IMAGE_NAME>>
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN ./configure --config-musl \
-	&& make -j$(nproc) \
-	&& make test -j$(nproc) \
-	&& make install
+ARG DEBIAN_FRONTEND=noninteractive
+RUN dpkg --add-architecture i386
+RUN apt update -y -q && apt dist-upgrade -y -q && apt update -y -q
+RUN apt install -y -q \
+    pmake \
+	bmake \
+    g++ \
+    gcc \
+    gcc-multilib \
+    libc6-dev-i386 \
+    linux-libc-dev \
+	git \
+	&&	apt-get clean && \
+	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ARG DOCKER_IMAGE=alpine:latest
-FROM $DOCKER_IMAGE AS runtime
+RUN git clone --recurse-submodules --remote-submodules  https://github.com/tendra/tendra.git
+WORKDIR /tendra
+
+RUN git checkout e21a210d906329ddf6d3889b1dbb5a8a9b5c78a5
+
+RUN bmake -r CC=gcc TARGETARCH=x32_64
 
 LABEL author="Bensuperpc <bensuperpc@gmail.com>"
 LABEL mantainer="Bensuperpc <bensuperpc@gmail.com>"
@@ -19,24 +31,26 @@ LABEL mantainer="Bensuperpc <bensuperpc@gmail.com>"
 ARG VERSION="1.0.0"
 ENV VERSION=$VERSION
 
-RUN apk add --no-cache musl-dev make
+ENV PATH="/tendra/obj.buildkitsandbox-bootstrap/bin:${PATH}"
+ENV CC=/tendra/obj.buildkitsandbox-bootstrap/bin/tcc
 
-COPY --from=builder /usr/local /usr/local
+WORKDIR /tendra/obj.buildkitsandbox-bootstrap/bin
 
-ENV PATH="/usr/local/bin:${PATH}"
+RUN tcc -V
 
-ENV CC=/usr/local/bin/<<IMAGE_NAME>>
+RUN ln -s /usr/lib32 /usr/lib/i386-linux-gnu
+
 WORKDIR /usr/src/myapp
 
-CMD ["", "-h"]
+CMD ["tcc", "-V"]
 
 LABEL org.label-schema.schema-version="1.0" \
 	  org.label-schema.build-date=$BUILD_DATE \
-	  org.label-schema.name="bensuperpc/<<IMAGE_NAME>>" \
-	  org.label-schema.description="build <<IMAGE_NAME>> compiler" \
+	  org.label-schema.name="bensuperpc/tendra" \
+	  org.label-schema.description="build tendra compiler" \
 	  org.label-schema.version=$VERSION \
 	  org.label-schema.vendor="Bensuperpc" \
 	  org.label-schema.url="http://bensuperpc.com/" \
-	  org.label-schema.vcs-url="https://github.com/Bensuperpc/docker-<<IMAGE_NAME>>" \
+	  org.label-schema.vcs-url="https://github.com/Bensuperpc/docker-tendra" \
 	  org.label-schema.vcs-ref=$VCS_REF \
-	  org.label-schema.docker.cmd="docker build -t bensuperpc/<<IMAGE_NAME>> -f Dockerfile ."
+	  org.label-schema.docker.cmd="docker build -t bensuperpc/tendra -f Dockerfile ."

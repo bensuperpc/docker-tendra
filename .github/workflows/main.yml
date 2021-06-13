@@ -1,4 +1,4 @@
-name: docker-<<IMAGE_NAME>>
+name: docker-tendra
 
 on:
   push:
@@ -12,12 +12,12 @@ on:
     branches:
     - '*'
   schedule:
-  - cron:  "0 7 * * 3"
+  - cron:  "0 2 */5 * *"
   workflow_dispatch:
 
 jobs:
   image:
-    name: docker-<<IMAGE_NAME>>
+    name: docker-tendra
     runs-on: ubuntu-20.04
     steps:
       - name: "📥 Checkout Code"
